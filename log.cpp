@@ -42,7 +42,7 @@ extern NTP ntp;
 #endif
 
 constexpr int err_log_buf_len = 256;
-#if defined(RP2040W)
+#if defined(RP2040W) || defined(TEENSY4_1)
 char err_log_buf[err_log_buf_len];
 #else
 thread_local char err_log_buf[err_log_buf_len];
@@ -116,7 +116,9 @@ namespace logging {
 
 		if (syslog_host.has_value() && is_network_up()) {
 			if (syslog_is_broadcast) {
+#if !defined(TEENSY4_1)
 				AUDP_socket.broadcastTo(err_log_buf, 514);
+#endif
 			}
 			else {
 				IPAddress ip;
